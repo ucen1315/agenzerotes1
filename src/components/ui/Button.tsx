@@ -8,7 +8,7 @@ export interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'onAnimatio
   children: React.ReactNode
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export const Button = React.memo<ButtonProps>(({
   variant = 'primary',
   size = 'md',
   className,
@@ -41,4 +41,6 @@ export const Button: React.FC<ButtonProps> = ({
       {children}
     </motion.button>
   )
-}
+})
+
+Button.displayName = 'Button'

@@ -2,14 +2,16 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { TrendingUp, TrendingDown, DollarSign } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card'
-import { formatCurrency, formatPercentage } from '../../lib/utils'
+import { useFormatCurrency, useFormatPercentage } from '../../hooks/useFormatCurrency'
 
 interface PortfolioValueProps {
   totalValue: number
   change24h: number
 }
 
-export const PortfolioValue: React.FC<PortfolioValueProps> = ({ totalValue, change24h }) => {
+export const PortfolioValue = React.memo<PortfolioValueProps>(({ totalValue, change24h }) => {
+  const formatCurrency = useFormatCurrency()
+  const formatPercentage = useFormatPercentage()
   const isPositive = change24h >= 0
 
   return (
@@ -46,4 +48,6 @@ export const PortfolioValue: React.FC<PortfolioValueProps> = ({ totalValue, chan
       </CardContent>
     </Card>
   )
-}
+})
+
+PortfolioValue.displayName = 'PortfolioValue'

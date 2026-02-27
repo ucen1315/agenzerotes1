@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Trash2, Copy, Eye, EyeOff, Key } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card'
@@ -24,46 +24,60 @@ export const ApiKeyManager: React.FC = () => {
     setApiKeys(keys)
   }
 
-  const handleCreateKey = async () => {
+  const handleCreateKey = useCallback(async () => {
     if (!newKeyName.trim()) return
     
     const newKey = await apiService.createApiKey(newKeyName, selectedPermissions)
-    setApiKeys([...apiKeys, newKey])
+    setApiKeys(prev => [...prev, newKey])
     setNewKeyName('')
     setSelectedPermissions(['read'])
     setShowCreateModal(false)
-  }
+  }, [newKeyName, selectedPermissions])
 
-  const handleDeleteKey = async (id: string) => {
+  const handleDeleteKey = useCallback(async (id: string) => {
     await apiService.deleteApiKey(id)
-    setApiKeys(apiKeys.filter(key => key.id !== id))
-  }
+    setApiKeys(prev => prev.filter(key => key.id !== id))
+  }, [])
 
-  const toggleKeyVisibility = (id: string) => {
-    const newVisible = new Set(visibleKeys)
-    if (newVisible.has(id)) {
-      newVisible.delete(id)
-    } else {
-      newVisible.add(id)
-    }
-    setVisibleKeys(newVisible)
-  }
+  const toggleKeyVisibility = useCallback((id: string) => {
+    setVisibleKeys(prev => {
+      const newVisible = new Set(prev)
+      if (newVisible.has(id)) {
+        newVisible.delete(id)
+      } else {
+        newVisible.add(id)
+      }
+      return newVisible
+    })
+  }, [])
 
-  const copyToClipboard = (key: string) => {
+  const copyToClipboard = useCallback((key: string) => {
     navigator.clipboard.writeText(key)
-  }
+  }, [])
 
-  const togglePermission = (permission: string) => {
+  const togglePermission = useCallback((permission: string) => {
     setSelectedPermissions(prev =>
       prev.includes(permission)
         ? prev.filter(p => p !== permission)
         : [...prev, permission]
     )
-  }
+  }, [])
 
-  const maskKey = (key: string) => {
+  const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewKeyName(e.target.value)
+  }, [])
+
+  const maskKey = useCallback((key: string) => {
     return key.slice(0, 8) + '***' + key.slice(-4)
-  }
+  }, [])
+
+  const handleModalClose = useCallback(() => {
+    setShowCreateModal(false)
+  }, [])
+
+  const handleModalClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+  }, [])
 
   return (
     <Card>
@@ -159,13 +173,13 @@ export const ApiKeyManager: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-              onClick={() => setShowCreateModal(false)}
+              onClick={handleModalClose}
             >
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
+                onClick={handleModalClick}
                 className="bg-navy-900 border border-navy-700 rounded-xl p-6 w-full max-w-md"
               >
                 <h3 className="text-xl font-bold text-white mb-4">Create New API Key</h3>
@@ -174,7 +188,7 @@ export const ApiKeyManager: React.FC = () => {
                   label="Key Name"
                   placeholder="e.g., Binance Trading Bot"
                   value={newKeyName}
-                  onChange={(e) => setNewKeyName(e.target.value)}
+                  onChange={handleNameChange}
                   className="mb-4"
                 />
 
@@ -198,7 +212,7 @@ export const ApiKeyManager: React.FC = () => {
                 <div className="flex space-x-3">
                   <Button
                     variant="secondary"
-                    onClick={() => setShowCreateModal(false)}
+                    onClick={handleModalClose}
                     className="flex-1"
                   >
                     Cancel

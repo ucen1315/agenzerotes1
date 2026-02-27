@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import { Card } from '../ui/Card'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
+import { useFormatCurrency } from '../../hooks/useFormatCurrency'
 
 interface MarketData {
   id: string
@@ -67,42 +68,40 @@ export const MarketTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [sortField, setSortField] = useState<keyof MarketData>('marketCap')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
+  const formatCurrency = useFormatCurrency()
 
-  const filteredData = mockMarketData
-    .filter((item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.symbol.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => {
-      const aValue = a[sortField]
-      const bValue = b[sortField]
-      if (sortDirection === 'asc') {
-        return aValue > bValue ? 1 : -1
-      } else {
-        return aValue < bValue ? 1 : -1
-      }
-    })
+  // Memoize filtered and sorted data to avoid recalculation on every render
+  const filteredData = useMemo(() => {
+    return mockMarketData
+      .filter((item) =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.symbol.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .sort((a, b) => {
+        const aValue = a[sortField]
+        const bValue = b[sortField]
+        if (sortDirection === 'asc') {
+          return aValue > bValue ? 1 : -1
+        } else {
+          return aValue < bValue ? 1 : -1
+        }
+      })
+  }, [searchTerm, sortField, sortDirection])
 
-  const handleSort = (field: keyof MarketData) => {
+  // Memoize sort handler to avoid creating new function on every render
+  const handleSort = useCallback((field: keyof MarketData) => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
     } else {
       setSortField(field)
       setSortDirection('desc')
     }
-  }
+  }, [sortField, sortDirection])
 
-  const formatCurrency = (value: number) => {
-    if (value >= 1e9) {
-      return `$${(value / 1e9).toFixed(2)}B`
-    } else if (value >= 1e6) {
-      return `$${(value / 1e6).toFixed(2)}M`
-    } else if (value >= 1e3) {
-      return `$${(value / 1e3).toFixed(2)}K`
-    } else {
-      return `$${value.toFixed(2)}`
-    }
-  }
+  // Memoize search handler
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value)
+  }, [])
 
   return (
     <Card className="p-6">
@@ -116,7 +115,7 @@ export const MarketTable: React.FC = () => {
             type="text"
             placeholder="Search assets..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
             className="w-64"
           />
           <Button variant="outline">Filter</Button>

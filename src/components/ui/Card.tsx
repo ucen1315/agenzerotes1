@@ -9,7 +9,7 @@ export interface CardProps {
   glow?: boolean
 }
 
-export const Card: React.FC<CardProps> = ({ children, className, hover = true, glow = false }) => {
+export const Card = React.memo<CardProps>(({ children, className, hover = true, glow = false }) => {
   return (
     <motion.div
       whileHover={hover ? { y: -4, scale: 1.01 } : {}}
@@ -23,16 +23,24 @@ export const Card: React.FC<CardProps> = ({ children, className, hover = true, g
       {children}
     </motion.div>
   )
-}
+})
 
-export const CardHeader: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
+Card.displayName = 'Card'
+
+export const CardHeader = React.memo<{ children: React.ReactNode; className?: string }>(({ children, className }) => (
   <div className={cn('mb-4', className)}>{children}</div>
-)
+))
 
-export const CardTitle: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
+CardHeader.displayName = 'CardHeader'
+
+export const CardTitle = React.memo<{ children: React.ReactNode; className?: string }>(({ children, className }) => (
   <h3 className={cn('text-lg font-semibold text-white', className)}>{children}</h3>
-)
+))
 
-export const CardContent: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
+CardTitle.displayName = 'CardTitle'
+
+export const CardContent = React.memo<{ children: React.ReactNode; className?: string }>(({ children, className }) => (
   <div className={cn('', className)}>{children}</div>
-)
+))
+
+CardContent.displayName = 'CardContent'

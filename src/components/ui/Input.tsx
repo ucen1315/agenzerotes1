@@ -1,17 +1,14 @@
 import React from 'react'
-import { motion, HTMLMotionProps } from 'framer-motion'
 import { cn } from '../../lib/utils'
 
-export interface InputProps extends Omit<HTMLMotionProps<'input'>, 'onAnimationStart'> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: string
-  helperText?: string
 }
 
-export const Input: React.FC<InputProps> = ({
+export const Input = React.memo<InputProps>(({
   label,
   error,
-  helperText,
   className,
   ...props
 }) => {
@@ -22,10 +19,9 @@ export const Input: React.FC<InputProps> = ({
           {label}
         </label>
       )}
-      <motion.input
-        whileFocus={{ scale: 1.01 }}
+      <input
         className={cn(
-          'w-full px-4 py-2 rounded-lg bg-navy-800 border border-navy-700',
+          'w-full px-4 py-2 bg-navy-800 border border-navy-700 rounded-lg',
           'text-white placeholder-gray-500',
           'focus:outline-none focus:ring-2 focus:ring-mint-500 focus:border-transparent',
           'disabled:opacity-50 disabled:cursor-not-allowed',
@@ -37,9 +33,8 @@ export const Input: React.FC<InputProps> = ({
       {error && (
         <p className="mt-1 text-sm text-red-400">{error}</p>
       )}
-      {helperText && !error && (
-        <p className="mt-1 text-sm text-gray-400">{helperText}</p>
-      )}
     </div>
   )
-}
+})
+
+Input.displayName = 'Input'
