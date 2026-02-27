@@ -60,7 +60,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-mint-400 to-mint-600 flex items-center justify-center">
                   <Shield className="w-5 h-5 text-navy-950" />
                 </div>
-                <span className="text-xl font-bold text-white">Decrypt</span>
+                <span className="text-xl font-bold text-white">myappkey</span>
               </motion.div>
             )}
             <button
