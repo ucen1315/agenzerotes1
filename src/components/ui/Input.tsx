@@ -1,66 +1,44 @@
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion, HTMLMotionProps } from 'framer-motion'
 import { cn } from '../../lib/utils'
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends Omit<HTMLMotionProps<'input'>, 'onAnimationStart'> {
   label?: string
   error?: string
-  leftIcon?: React.ReactNode
-  rightIcon?: React.ReactNode
+  helperText?: string
 }
 
 export const Input: React.FC<InputProps> = ({
   label,
   error,
-  leftIcon,
-  rightIcon,
+  helperText,
   className,
-  id,
   ...props
 }) => {
-  const inputId = id || `input-${Math.random().toString(36).substring(2, 9)}`
-
   return (
     <div className="w-full">
       {label && (
-        <label htmlFor={inputId} className="block text-sm font-medium text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-300 mb-2">
           {label}
         </label>
       )}
-      <div className="relative">
-        {leftIcon && (
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-            {leftIcon}
-          </div>
+      <motion.input
+        whileFocus={{ scale: 1.01 }}
+        className={cn(
+          'w-full px-4 py-2 rounded-lg bg-navy-800 border border-navy-700',
+          'text-white placeholder-gray-500',
+          'focus:outline-none focus:ring-2 focus:ring-mint-500 focus:border-transparent',
+          'disabled:opacity-50 disabled:cursor-not-allowed',
+          error && 'border-red-500 focus:ring-red-500',
+          className
         )}
-        <motion.input
-          whileFocus={{ scale: 1.01 }}
-          id={inputId}
-          className={cn(
-            'w-full bg-navy-800 border rounded-lg px-4 py-2 text-white placeholder-gray-400',
-            'focus:outline-none focus:ring-2 focus:ring-mint-500 focus:border-transparent',
-            'transition-all duration-200',
-            leftIcon && 'pl-10',
-            rightIcon && 'pr-10',
-            error ? 'border-red-500 focus:ring-red-500' : 'border-navy-600',
-            className
-          )}
-          {...props}
-        />
-        {rightIcon && (
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
-            {rightIcon}
-          </div>
-        )}
-      </div>
+        {...props}
+      />
       {error && (
-        <motion.p
-          initial={{ opacity: 0, y: -5 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-1 text-sm text-red-400"
-        >
-          {error}
-        </motion.p>
+        <p className="mt-1 text-sm text-red-400">{error}</p>
+      )}
+      {helperText && !error && (
+        <p className="mt-1 text-sm text-gray-400">{helperText}</p>
       )}
     </div>
   )
