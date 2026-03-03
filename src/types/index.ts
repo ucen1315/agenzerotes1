@@ -1,67 +1,31 @@
+// Re-export all types
+export type { User, Transaction, Asset, MarketData } from './index';
+// Define types here or in separate files
 export interface User {
-  id: string
-  email: string
-  name: string
-  avatar?: string
-  isVerified: boolean
-}
-
-export interface Wallet {
-  id: string
-  address: string
-  balance: number
-  network: string
-  isConnected: boolean
-}
-
-export interface Asset {
-  id: string
-  symbol: string
-  name: string
-  price: number
-  change24h: number
-  marketCap: number
-  volume24h: number
-  image?: string
-}
-
-export interface PortfolioAsset extends Asset {
-  holdings: number
-  value: number
-  allocation: number
+  id: string;
+  name: string;
+  email: string;
 }
 
 export interface Transaction {
-  id: string
-  type: 'buy' | 'sell' | 'transfer'
-  asset: string
-  amount: number
-  price: number
-  total: number
-  timestamp: Date
-  status: 'completed' | 'pending' | 'failed'
+  id: string;
+  type: 'buy' | 'sell';
+  amount: number;
+  currency: string;
+  date: Date;
 }
 
-export interface ApiKey {
-  id: string
-  name: string
-  key: string
-  permissions: string[]
-  createdAt: Date
-  lastUsed?: Date
-  isActive: boolean
+export interface Asset {
+  symbol: string;
+  name: string;
+  balance: number;
+  value: number;
+  change24h: number;
 }
 
-export interface SecuritySettings {
-  twoFactorEnabled: boolean
-  emailNotifications: boolean
-  loginAlerts: boolean
-  withdrawalWhitelist: string[]
-}
-
-export interface AppState {
-  user: User | null
-  wallet: Wallet | null
-  isAuthenticated: boolean
-  currentPage: string
+export interface MarketData {
+  symbol: string;
+  price: number;
+  change24h: number;
+  volume: number;
 }

@@ -1,0 +1,8 @@
+{
+  "name": "testbikinweb1",
+  "description": "Crypto Dashboard App - React + Vite + TypeScript + Tailwind",
+  "provider": "nebius",
+  "model": "moonshotai/Kimi-K2.5",
+  "workingDir": "/a0/usr/projects/testbikinweb1",
+  "extensionPath": "~/.pi/extensions/nebius.js"
+}
