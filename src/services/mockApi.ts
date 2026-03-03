@@ -42,6 +42,8 @@ export const mockApiKeys: ApiKey[] = [
 
 // Mock security settings
 export const mockSecuritySettings: SecuritySettings = {
+  emailVerified: true,
+  loginNotifications: true,
   twoFactorEnabled: true,
   emailNotifications: true,
   loginAlerts: true,
